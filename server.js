@@ -5,8 +5,11 @@ const app = express();
 
 const SERVER_PORT = process.env.SERVER_PORT || 3000;
 
-app.use('/posts', postsRouter);
+app.use(express.static('public', {
+    index: false
+}));
 
+app.use('/posts', postsRouter);
 
 app.listen(SERVER_PORT, (error) => {
 
