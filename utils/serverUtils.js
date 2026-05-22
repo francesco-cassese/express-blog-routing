@@ -1,4 +1,4 @@
-const checkId = id => {
+const validateId = id => {
 
     if (!id) {
         return {
@@ -53,4 +53,4 @@ const checkPosts = (posts, id) => {
     };
 };
 
-export { checkId, checkPosts };
+export { validateId, checkPosts };

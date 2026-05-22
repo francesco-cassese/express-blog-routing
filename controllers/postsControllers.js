@@ -1,5 +1,5 @@
 import posts from '../data/posts.js';
-import { checkId, checkPosts } from '../utils/serverUtils.js'
+import { validateId, checkPosts } from '../utils/serverUtils.js'
 
 
 const index = (request, response) => {
