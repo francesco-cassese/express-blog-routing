@@ -1,12 +1,12 @@
 import express from 'express';
+import postsRouter from './routers/postsRouters.js';
 
 const app = express();
 
 const SERVER_PORT = process.env.SERVER_PORT || 3000;
 
-app.get('/', (request, response) => {
-    response.send('Server startato correttamente')
-})
+app.use('/posts', postsRouter);
+
 
 app.listen(SERVER_PORT, (error) => {
 
@@ -14,6 +14,5 @@ app.listen(SERVER_PORT, (error) => {
         console.log('Il server ha riscontrato dei problemi', error);
     } else {
         console.log('Server in ascolto sulla porta:', SERVER_PORT);
-
     }
 })
