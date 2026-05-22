@@ -1,5 +1,5 @@
-import express from 'express';
 import posts from '../data/posts.js';
+import { checkId, checkPosts } from '../utils/serverUtils.js'
 
 
 const index = (request, response) => {
@@ -9,58 +9,102 @@ const index = (request, response) => {
 const show = (request, response) => {
     const { id } = request.params;
 
-    if (!id) {
+    const checkedId = checkId(id);
+
+    if (checkedId.error) {
         return response.status(404)
-            .json({
-                error: "ID mancante nella richiesta",
-                results: null
-            });
+            .json(checkedId);
     }
 
-    const numId = Number(id.trim());
+    const postFound = checkPosts(posts, checkedId.results);
 
-    if (isNaN(numId)) {
-        response.status(404)
-            .json({
-                error: `Valore dell'id non conforme o inesistente`,
-                results: null
-            })
-        return;
-    }
-
-    if (numId % 1 !== 0) {
+    if (postFound.error) {
         return response.status(404)
-            .json({
-                error: `L'ID deve essere un numero intero`,
-                results: null
-            });
+            .json(postFound);
     }
 
-    if (numId <= 0) {
-        response.status(404)
-            .json({
-                error: `Non esistono elementi con id minori o uguali a zero nel sistema`,
-                results: null
-            })
-        return;
-    }
+    return response.json({
+        error: null,
+        results: postFound.results
+    });
+};
 
-    const postsFound = posts.find(post => {
-        return post.id === numId;
+const store = (request, response) => {
+    response.json({
+        error: null,
+        results: 'Creare un nuovo elemento'
     })
+}
 
-    if (!postsFound) {
+const update = (request, response) => {
+    const { id } = request.params;
+
+    const checkedId = checkId(id);
+
+    if (checkedId.error) {
         return response.status(404)
-            .json({
-                error: `Post con ID ${numId} non trovato nel sistema`,
-                results: null
-            });
+            .json(checkedId);
+    }
+
+    const postFound = checkPosts(posts, checkedId.results);
+
+    if (postFound.error) {
+        return response.status(404)
+            .json(postFound);
     }
 
     response.json({
         error: null,
-        results: postsFound
-    });
+        results: `Modificare iteramente l'elemento ${checkedId.results}`
+    })
 }
 
-export { index, show }
+const modify = (request, response) => {
+
+    const { id } = request.params;
+
+    const checkedId = checkId(id);
+
+    if (checkedId.error) {
+        return response.status(404)
+            .json(checkedId);
+    }
+
+    const postFound = checkPosts(posts, checkedId.results);
+
+    if (postFound.error) {
+        return response.status(404)
+            .json(postFound);
+    }
+
+    response.json({
+        error: null,
+        results: `Modificare parzialmente l'elemento ${checkedId.results}`
+    })
+}
+
+const destroy = (request, response) => {
+
+    const { id } = request.params;
+
+    const checkedId = checkId(id);
+
+    if (checkedId.error) {
+        return response.status(404)
+            .json(checkedId);
+    }
+
+    const postFound = checkPosts(posts, checkedId.results);
+
+    if (postFound.error) {
+        return response.status(404)
+            .json(postFound);
+    }
+
+    response.json({
+        error: null,
+        results: `Vuoi eliminare l'elemento con id ${checkedId.results}`
+    })
+}
+
+export { index, show, store, update, modify, destroy }
